@@ -82,7 +82,7 @@ body{
         </tbody>
     </table>
     <p style="font-weight: bold; color: #009879; font-size: 1.2em; margin-bottom: 0;">Informations:</p>
-    <p style="margin-top:  0; width: 50ch;">${info}</p>
+    <p style="margin-top:  0; width: 45ch;">${info}</p>
 
 </body>
 </html>

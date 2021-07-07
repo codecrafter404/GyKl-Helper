@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Converter {
 
@@ -36,13 +37,13 @@ public class Converter {
         List<Subject> subjects = new ArrayList<>();
         String info = (DAY.getInfo() == "") ? "" : DAY.getInfo();
 
-        int index = 0;
+        AtomicInteger index = new AtomicInteger();
         DAY.getSubjects().forEach(
                 subject -> {
                 subjects.add(
 
                         new Subject(
-                                times.getTime(index),
+                                times.getTime(index.get()),
                                 subject.get(0).getName_full(),
                                 subject.get(0).getTeacher().get(0).getName(),
                                 subject.get(0).getRoom_name(),
@@ -50,6 +51,7 @@ public class Converter {
                                 (subject.get(0).isFailure()) ? "failure" : (subject.get(0).isChange()) ? "change" : ""
                         )
                 );
+                index.getAndIncrement();
                 }
         );
         Map<String, Object> input = new HashMap<>();
@@ -95,7 +97,6 @@ public class Converter {
         String line = "";
         while((line = rdr.readLine()) != null) {
             base64IMG = line;
-            System.out.println(line);
         }
         isr = new InputStreamReader(process.getErrorStream());
         rdr = new BufferedReader(isr);
@@ -103,10 +104,16 @@ public class Converter {
             System.out.println(line);
         }
         process.waitFor();
-
-
-
-
         return ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(base64IMG)));
+    }
+
+    public byte[] image2ByteArray(StartTimes times) throws TemplateException, IOException, InterruptedException {
+        BufferedImage image = day2Image(times);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", out);
+        out.flush();
+
+        return out.toByteArray();
     }
 }
