@@ -1,27 +1,16 @@
 package me._4o4.vplanbot.Listeners;
 
-import me._4o4.vplanbot.models.Config;
 import me._4o4.vplanbot.models.Environment;
 import me._4o4.vplanbot.utils.Converter;
 import me._4o4.vplanbot.utils.DateUtil;
 import me._4o4.vplanwrapper.VPlanAPI;
 import me._4o4.vplanwrapper.models.Week;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +20,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if(event.getMessage().getChannel().getName().equalsIgnoreCase(Environment.getVplanBot()))
         if(!event.getMessage().getContentRaw().startsWith("!")) return;
         if(event.getAuthor().isBot()) return;
 
@@ -43,6 +33,7 @@ public class MessageListener extends ListenerAdapter {
                 ).queue();
                 break;
             case "!day":
+
                 if(args.length != 2){
                     event.getMessage().getChannel().sendMessage("No date specified!\nUsage: !day <mm/dd/yyyy> or !day <today/heute/tomorrow/morgen>").queue();
                     break;
@@ -57,7 +48,7 @@ public class MessageListener extends ListenerAdapter {
                 try{
                     Week week = new VPlanAPI(Environment.getVplanHost(), Environment.getVplanPassword()).getWeek(
                             Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(date)),
-                            "7b"
+                            Environment.getVplanClass()
                     );
                     if(week.getDays().get(0).getError() != ""){
                         event.getMessage().getChannel().sendMessage("Day not found, not available or its on weekend!:face_with_monocle:").queue();

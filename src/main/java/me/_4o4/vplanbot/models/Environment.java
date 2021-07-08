@@ -7,7 +7,8 @@ public class Environment {
     private static String VPLAN_BOT = "bot";
     private static String VPLAN_HOST = "";
     private static String VPLAN_PASSWORD = "";
-    private static String VPLAN_TIME = "15:30";
+    private static String VPLAN_TIME = "16";
+    private static String VPLAN_CLASS = "7b";
 
     public static void parseEnvironments() throws IllegalAccessException {
         for(Field field : Environment.class.getDeclaredFields()){
@@ -21,6 +22,20 @@ public class Environment {
             }
             field.setAccessible(false);
         }
+        try{
+            if(!(Integer.parseInt(VPLAN_TIME) >= 0) || !(Integer.parseInt(VPLAN_TIME) <= 24)){
+                System.out.println("[ERROR] VPLAN_TIME is a incorrect time");
+                System.exit(-1);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("[ERROR] VPLAN_TIME is a incorrect time");
+            System.exit(-1);
+        }
+    }
+
+    public static String getVplanClass() {
+        return VPLAN_CLASS;
     }
 
     public static String getVplanAnnounce() {
