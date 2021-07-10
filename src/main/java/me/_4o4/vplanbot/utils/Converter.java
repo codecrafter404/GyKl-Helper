@@ -68,7 +68,7 @@ public class Converter {
     public BufferedImage day2Image(StartTimes times) throws TemplateException, IOException, InterruptedException {
 
         String html = day2Html(times);
-        File phantomjs = (System.getProperty("os.arch").equals("amd64")) ? Phanbedder.unpack() : new File("/tmp/arm/phantomjs");
+        File phantomjs = Phanbedder.unpack();//(System.getProperty("os.arch").equals("amd64")) ?  : new File("/tmp/arm/phantomjs");
         System.out.println(phantomjs.getAbsolutePath());
         ResourceUtil.extractResource(
                 "/convert.js",
