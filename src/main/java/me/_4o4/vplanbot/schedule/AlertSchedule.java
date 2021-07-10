@@ -29,7 +29,7 @@ public class AlertSchedule implements Runnable {
     @Override
     public void run() {
         try{
-            Week week = null;
+            Week week;
 
             //Hour == 16
             Date date = java.sql.Date.valueOf(LocalDate.now());
