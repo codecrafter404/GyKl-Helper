@@ -13,5 +13,18 @@ This Discord Bot is Based on Docker und uses Environment variables.
 | VPLAN_CLASS | The Class for the VPlan | 7b |
 | VPLAN_DEBUG | Enable Debug | false |
 
+# Volumes
+The Cointainer need a mounted JSON configfile within the discord access token.
+| Mount | Description |
+| --- | --- |
+| /config/secret.json | Includes the discord access token |
+
+# Example secrets.json File
+```
+{
+    "token": "TOP Secret Token, not shared with Everyone!"
+}
+```
+
 # WARRENTY
 NO WARRENTY, THIS IS AN UNOFFICAL PROJECT!
