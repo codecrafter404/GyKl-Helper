@@ -37,13 +37,10 @@ jobs:
           output_file: ./m2/settings.xml
     
       - name: Print ./m2/settings.xml
-        run: echo ./m2/settings.xml
-        
-      - name: PWD
-        run: pwd
+        run: cat ./m2/settings.xml
         
       - name: Build with Maven
-        run: mvn -B -e clean package --file pom.xml --settings ./m2/settings.xml
+        run: mvn -B -e --file pom.xml -s ./m2/settings.xml clean package
        
        # Push to Docker registry
       - name: Set up QEMU
