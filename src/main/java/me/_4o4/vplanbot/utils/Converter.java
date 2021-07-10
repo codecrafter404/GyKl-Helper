@@ -89,6 +89,7 @@ public class Converter {
         html = html.replace("\n", "");
         os.write((html + "\n").getBytes(StandardCharsets.UTF_8));
         os.flush();
+        os.close();
 
         //Read Base64
         InputStreamReader isr = new InputStreamReader(process.getInputStream());
@@ -105,6 +106,8 @@ public class Converter {
         while((line = rdr.readLine()) != null) {
             System.out.println(line);
         }
+        isr.close();
+        rdr.close();
         process.waitFor();
         return ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(base64IMG)));
     }
