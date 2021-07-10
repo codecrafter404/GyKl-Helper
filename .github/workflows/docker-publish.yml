@@ -1,10 +1,5 @@
 name: Docker
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 on:
   push:
     branches: [ master ]
@@ -33,6 +28,13 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v18
+        with:
+          servers: '[{"id": "github","username": "codecrafter404","password": "${{ secrets.PACKAGE_TOKEN }}"}]'
+          repositories: '[{"id": "central","name": "Maven Central","url": "https://repo1.maven.org/maven2","releases": {"enabled": "true"},"snapshots": {"enabled": "false"}},{"id": "github","name": "Github","url": "https://maven.pkg.github.com/codecrafter404/*","releases": {"enabled": "true"},"snapshots": {"enabled": "false"}}]'
+          output_file: .m2/settings.xml
     
       - name: Build with Maven
         run: mvn -B clean package --file pom.xml
