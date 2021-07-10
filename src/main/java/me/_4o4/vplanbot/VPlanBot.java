@@ -24,6 +24,7 @@ public class VPlanBot {
 
         final String SECRET_DIRECTORY = "/config/secret.json";
 
+        System.out.println("[INFO] We're on " + System.getProperty("os.arch"));
         Config conf= ConfigParse.parseConfig(SECRET_DIRECTORY);
         Environment.parseEnvironments();
 
