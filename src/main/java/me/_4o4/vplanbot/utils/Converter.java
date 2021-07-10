@@ -5,6 +5,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import me._4o4.vplanbot.VPlanBot;
+import me._4o4.vplanbot.models.Environment;
 import me._4o4.vplanbot.models.Subject;
 import me._4o4.vplanwrapper.models.Day;
 import me._4o4.vplanwrapper.models.StartTimes;
@@ -67,7 +68,7 @@ public class Converter {
     public BufferedImage day2Image(StartTimes times) throws TemplateException, IOException, InterruptedException {
 
         String html = day2Html(times);
-        File phantomjs = Phanbedder.unpack();
+        File phantomjs = (Environment.getVplanPath().equals("")) ? Phanbedder.unpack() : new File(Environment.getVplanPath());
         ResourceUtil.extractResource(
                 "/convert.js",
                 System.getProperty("user.dir") + File.separator + "convert.js"

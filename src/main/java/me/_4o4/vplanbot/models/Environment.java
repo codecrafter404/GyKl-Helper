@@ -10,6 +10,7 @@ public class Environment {
     private static String VPLAN_TIME = "16";
     private static String VPLAN_CLASS = "7b";
     private static String VPLAN_DEBUG = "false";
+    private static String VPLAN_PATH = "";
 
     public static void parseEnvironments() throws IllegalAccessException {
         for(Field field : Environment.class.getDeclaredFields()){
@@ -61,5 +62,9 @@ public class Environment {
 
     public static String getVplanTime() {
         return VPLAN_TIME;
+    }
+
+    public static String getVplanPath() {
+        return VPLAN_PATH;
     }
 }
