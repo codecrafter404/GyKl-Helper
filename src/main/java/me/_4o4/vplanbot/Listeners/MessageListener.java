@@ -1,6 +1,8 @@
 package me._4o4.vplanbot.Listeners;
 
+import me._4o4.vplanbot.VPlanBot;
 import me._4o4.vplanbot.models.Environment;
+import me._4o4.vplanbot.schedule.AlertSchedule;
 import me._4o4.vplanbot.utils.Converter;
 import me._4o4.vplanbot.utils.DateUtil;
 import me._4o4.vplanwrapper.VPlanAPI;
@@ -20,7 +22,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if(event.getMessage().getChannel().getName().equalsIgnoreCase(Environment.getVplanBot()))
+        if(!event.getMessage().getChannel().getName().equalsIgnoreCase(Environment.getVplanBot())) return;
         if(!event.getMessage().getContentRaw().startsWith("!")) return;
         if(event.getAuthor().isBot()) return;
 
@@ -71,6 +73,13 @@ public class MessageListener extends ListenerAdapter {
                     event.getMessage().getChannel().sendMessage("An error occurred while getting plan ready for u!:exploding_head:").queue();
                 }
 
+                break;
+            case "!test":
+                if(Boolean.parseBoolean(Environment.getVplanDebug())){
+                    VPlanBot.getAlert().run();
+                }else {
+                    event.getMessage().getChannel().sendMessage("This command is currently disabled!").queue();
+                }
                 break;
             case "!help":
                 EmbedBuilder eb = new EmbedBuilder();

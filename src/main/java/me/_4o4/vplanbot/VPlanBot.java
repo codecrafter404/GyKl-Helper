@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VPlanBot {
     private static JDA jda = null;
+    private static AlertSchedule alert = null;
     public static void main(String[] args) throws IOException, LoginException, IllegalAccessException, InterruptedException {
 
         final String SECRET_DIRECTORY = "/config/secret.json";
@@ -43,9 +44,14 @@ public class VPlanBot {
         return jda;
     }
 
+    public static AlertSchedule getAlert() {
+        if(alert == null) alert =  new AlertSchedule();
+        return alert;
+    }
+
     public void schedule() {
         ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutor.scheduleAtFixedRate(new AlertSchedule(), millisToNextHour()
+        scheduledExecutor.scheduleAtFixedRate(getAlert(), millisToNextHour()
                 , 60*60*1000 + 1000, TimeUnit.MILLISECONDS);
         System.out.println("[INFO] Scheduled Announcement in " + millisToNextHour() / 60000 + "m");
     }

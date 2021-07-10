@@ -9,6 +9,7 @@ public class Environment {
     private static String VPLAN_PASSWORD = "";
     private static String VPLAN_TIME = "16";
     private static String VPLAN_CLASS = "7b";
+    private static String VPLAN_DEBUG = "false";
 
     public static void parseEnvironments() throws IllegalAccessException {
         for(Field field : Environment.class.getDeclaredFields()){
@@ -32,6 +33,10 @@ public class Environment {
             System.out.println("[ERROR] VPLAN_TIME is a incorrect time");
             System.exit(-1);
         }
+    }
+
+    public static String getVplanDebug() {
+        return VPLAN_DEBUG;
     }
 
     public static String getVplanClass() {

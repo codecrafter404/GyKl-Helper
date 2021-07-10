@@ -30,12 +30,12 @@ public class AlertSchedule implements Runnable {
     public void run() {
         try{
             Week week = null;
-            LocalTime time = LocalTime.of(Integer.parseInt(Environment.getVplanTime()), 0);
 
             //Hour == 16
             Date date = java.sql.Date.valueOf(LocalDate.now());
             DayOfWeek dayOfWeek = DayOfWeek.from(LocalDate.now());
-            if(LocalTime.now().getHour() == time.getHour()){
+            if(LocalTime.now().getHour() == Integer.parseInt(Environment.getVplanTime())){
+                System.out.println("Its 16? " + LocalTime.now().getHour());
                 //Ignore 5,6
                 if(dayOfWeek.getValue() == 5 || dayOfWeek.getValue() == 6) return;
                 //Announce
@@ -58,9 +58,15 @@ public class AlertSchedule implements Runnable {
                 sendDay(week.getTimes(), week.getDays().get(0), java.sql.Date.valueOf(LocalDate.now().plusDays(1)));
 
             }else {
+                System.out.println("Checking Updated!");
                 //Ignore 6,7
                 //Check Updated
                 if(dayOfWeek.getValue() == 6 || dayOfWeek.getValue() == 7) return;
+
+                if(LocalTime.now().getHour() > Integer.parseInt(Environment.getVplanTime()) && !(dayOfWeek.getValue() == 5)){
+                    date = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
+                }
+
                 week = new VPlanAPI(
                         Environment.getVplanHost(),
                         Environment.getVplanPassword()
@@ -78,7 +84,9 @@ public class AlertSchedule implements Runnable {
 
                 if(lastUpdatedWeek.size() == week.getDays().get(0).getSubjects().size()) {
                     for (int i = 0; i < lastUpdatedWeek.size(); i++) {
-                        isDiff = lastUpdatedWeek.get(i) != week.getDays().get(0).getSubjects().get(i);
+                        isDiff = !lastUpdatedWeek.get(i).get(0).getName_full().equals(week.getDays().get(0).getSubjects().get(i).get(0).getName_full());
+                        if(!isDiff) isDiff = !lastUpdatedWeek.get(i).get(0).getRoom_name().equals(week.getDays().get(0).getSubjects().get(i).get(0).getRoom_name());
+                        if(!isDiff) isDiff = !lastUpdatedWeek.get(i).get(0).getTeacher().get(0).getName().equals(week.getDays().get(0).getSubjects().get(i).get(0).getTeacher().get(0).getName());
                     }
                 }else {
                     isDiff = true;
