@@ -3,15 +3,15 @@ A Discord Bot that announces the current VPlan.
 
 # Environments
 This Discord Bot is Based on Docker und uses Environment variables.
-| Environment | Description | Default |
-| --- | --- | --- |
-| VPLAN_ANNOUNCE | The Announcment Channel | vertretungsplan |
-| VPLAN_BOT | The Bot Channel | bot |
-| VPLAN_HOST | The host for the API | --- |
-| VPLAN_PASSWORD | The Password for the API | --- |
-| VPLAN_TIME | The hour for the announcment| 16 |
-| VPLAN_CLASS | The Class for the VPlan | 7b |
-| VPLAN_DEBUG | Enable Debug | false |
+| Environment | Description | Default | Type |
+| --- | --- | --- | --- |
+| VPLAN_ANNOUNCE | The Announcment Channel | vertretungsplan | String |
+| VPLAN_BOT | The Bot Channel | bot | String |
+| VPLAN_HOST | The host for the API | --- | String |
+| VPLAN_PASSWORD | The Password for the API | --- | String |
+| VPLAN_TIME | The hour for the announcment| 16 | Int(0-24)
+| VPLAN_CLASS | The Class for the VPlan | 7b | String |
+| VPLAN_DEBUG | Enable Debug | false | String |
 
 # Volumes
 The Cointainer need a mounted JSON configfile within the discord access token.
