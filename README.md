@@ -19,7 +19,7 @@ The Cointainer need a mounted JSON configfile within the discord access token.
 | --- | --- |
 | /config/secret.json | Includes the discord access token |
 
-# Example secrets.json File
+# Example secret.json File
 ```
 {
     "token": "TOP Secret Token, not shared with Everyone!"
