@@ -1,7 +1,7 @@
-package me._4o4.vplanbot.utils;
+package me._4o4.gyklHelper.utils;
 
 import com.google.gson.Gson;
-import me._4o4.vplanbot.models.Config;
+import me._4o4.gyklHelper.models.Config;
 
 import java.io.IOException;
 import java.nio.file.Files;

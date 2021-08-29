@@ -1,10 +1,10 @@
-package me._4o4.vplanbot;
+package me._4o4.gyklHelper;
 
-import me._4o4.vplanbot.Listeners.MessageListener;
-import me._4o4.vplanbot.models.Config;
-import me._4o4.vplanbot.models.Environment;
-import me._4o4.vplanbot.schedule.AlertSchedule;
-import me._4o4.vplanbot.utils.ConfigParse;
+import me._4o4.gyklHelper.Listeners.MessageListener;
+import me._4o4.gyklHelper.models.Config;
+import me._4o4.gyklHelper.models.Environment;
+import me._4o4.gyklHelper.schedule.AlertSchedule;
+import me._4o4.gyklHelper.utils.ConfigParse;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class VPlanBot {
+public class GyKlHelper {
     private static JDA jda = null;
     private static AlertSchedule alert = null;
     public static void main(String[] args) throws IOException, LoginException, IllegalAccessException, InterruptedException {
@@ -37,7 +37,7 @@ public class VPlanBot {
 
         jda.addEventListener(new MessageListener());
 
-        new VPlanBot().schedule();
+        new GyKlHelper().schedule();
 
     }
 

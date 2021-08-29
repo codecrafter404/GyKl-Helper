@@ -1,10 +1,9 @@
-package me._4o4.vplanbot.Listeners;
+package me._4o4.gyklHelper.Listeners;
 
-import me._4o4.vplanbot.VPlanBot;
-import me._4o4.vplanbot.models.Environment;
-import me._4o4.vplanbot.schedule.AlertSchedule;
-import me._4o4.vplanbot.utils.Converter;
-import me._4o4.vplanbot.utils.DateUtil;
+import me._4o4.gyklHelper.GyKlHelper;
+import me._4o4.gyklHelper.models.Environment;
+import me._4o4.gyklHelper.utils.Converter;
+import me._4o4.gyklHelper.utils.DateUtil;
 import me._4o4.vplanwrapper.VPlanAPI;
 import me._4o4.vplanwrapper.models.Week;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -76,7 +75,7 @@ public class MessageListener extends ListenerAdapter {
                 break;
             case "!test":
                 if(Boolean.parseBoolean(Environment.getVplanDebug())){
-                    VPlanBot.getAlert().run();
+                    GyKlHelper.getAlert().run();
                 }else {
                     event.getMessage().getChannel().sendMessage("This command is currently disabled!").queue();
                 }

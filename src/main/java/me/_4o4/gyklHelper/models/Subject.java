@@ -1,4 +1,4 @@
-package me._4o4.vplanbot.models;
+package me._4o4.gyklHelper.models;
 
 public class Subject {
     private final String time;

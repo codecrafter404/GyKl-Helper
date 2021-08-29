@@ -1,12 +1,11 @@
-package me._4o4.vplanbot.utils;
+package me._4o4.gyklHelper.utils;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import me._4o4.vplanbot.VPlanBot;
-import me._4o4.vplanbot.models.Environment;
-import me._4o4.vplanbot.models.Subject;
+import me._4o4.gyklHelper.GyKlHelper;
+import me._4o4.gyklHelper.models.Subject;
 import me._4o4.vplanwrapper.models.Day;
 import me._4o4.vplanwrapper.models.StartTimes;
 import net.anthavio.phanbedder.Phanbedder;
@@ -33,7 +32,7 @@ public class Converter {
         conf.setDefaultEncoding("UTF-8");
         conf.setLocale(Locale.GERMAN);
         conf.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        conf.setClassForTemplateLoading(VPlanBot.class, "templates");
+        conf.setClassForTemplateLoading(GyKlHelper.class, "templates");
 
         List<Subject> subjects = new ArrayList<>();
         String info = (DAY.getInfo() == "") ? "" : DAY.getInfo();

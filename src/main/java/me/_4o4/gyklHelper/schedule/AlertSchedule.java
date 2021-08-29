@@ -1,9 +1,9 @@
-package me._4o4.vplanbot.schedule;
+package me._4o4.gyklHelper.schedule;
 
 import freemarker.template.TemplateException;
-import me._4o4.vplanbot.VPlanBot;
-import me._4o4.vplanbot.models.Environment;
-import me._4o4.vplanbot.utils.Converter;
+import me._4o4.gyklHelper.GyKlHelper;
+import me._4o4.gyklHelper.models.Environment;
+import me._4o4.gyklHelper.utils.Converter;
 import me._4o4.vplanwrapper.VPlanAPI;
 import me._4o4.vplanwrapper.models.Day;
 import me._4o4.vplanwrapper.models.StartTimes;
@@ -24,7 +24,7 @@ public class AlertSchedule implements Runnable {
 
     List<List<Subject>> lastUpdatedWeek = new ArrayList<>();
 
-    MessageChannel channel = VPlanBot.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0);
+    MessageChannel channel = GyKlHelper.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0);
 
     @Override
     public void run() {
@@ -114,7 +114,7 @@ public class AlertSchedule implements Runnable {
         embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy").format(dateToSend));
         embed.setImage("attachment://plan.png");
 
-        VPlanBot.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0).sendMessage(embed.build())
+        GyKlHelper.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0).sendMessage(embed.build())
                 .addFile(new ByteArrayInputStream(converter.image2ByteArray(times)), "plan.png")
                 .queue();
     }

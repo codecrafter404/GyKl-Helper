@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me._4o4</groupId>
-    <artifactId>VPlanBOT</artifactId>
+    <artifactId>GyKl_Helper</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -34,7 +34,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>me._4o4.vplanbot.VPlanBot</mainClass>
+                            <mainClass>me._4o4.gyklHelper.GyKlHelper</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -55,7 +55,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/java/me/_4o4/vplanbot/templates/</directory>
+                <directory>src/main/java/me/_4o4/gyklHelper/templates/</directory>
                 <targetPath>me/_4o4/vplanbot/templates/</targetPath>
                 <includes>
                     <include>table.ftl</include>
