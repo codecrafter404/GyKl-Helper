@@ -24,10 +24,11 @@ public class AlertSchedule implements Runnable {
 
     List<List<Subject>> lastUpdatedWeek = new ArrayList<>();
 
-    MessageChannel channel = GyKlHelper.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0);
+    // MessageChannel channel = GyKlHelper.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0);
 
     @Override
     public void run() {
+        /*
         try{
             Week week;
 
@@ -117,5 +118,7 @@ public class AlertSchedule implements Runnable {
         GyKlHelper.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0).sendMessage(embed.build())
                 .addFile(new ByteArrayInputStream(converter.image2ByteArray(times)), "plan.png")
                 .queue();
+         */
     }
+
 }

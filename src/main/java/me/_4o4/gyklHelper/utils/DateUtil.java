@@ -1,11 +1,12 @@
 package me._4o4.gyklHelper.utils;
 
+import me._4o4.gyklHelper.GyKlHelper;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class DateUtil {
     public static boolean isValid(String dateStr) {
@@ -19,26 +20,29 @@ public class DateUtil {
         return true;
     }
     public static Date getDate(String date){
+        if(date == null || date.equals("")) return null;
         DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         sdf.setLenient(false);
         Date d = null;
-        if(!date.equalsIgnoreCase("morgen") && !date.equalsIgnoreCase("tomorrow") && !date.equalsIgnoreCase("today") && !date.equalsIgnoreCase("heute")){
+        List<String> tomorrowStrings = new ArrayList<>();
+        GyKlHelper.getLanguageManager().getAllLanguages().forEach(
+                language ->{
+                    tomorrowStrings.add(language.getDay_Tomorrow());
+                }
+        );
+        if(!tomorrowStrings.contains(date.toLowerCase())){
             try {
                 d = sdf.parse(date);
             } catch (ParseException e) {
-                return d;
+                return null;
             }
         }else {
-            if(date.equalsIgnoreCase("morgen") || date.equalsIgnoreCase("tomorrow")){
-                Date dt = java.sql.Date.valueOf(LocalDate.now());
-                Calendar c = Calendar.getInstance();
-                c.setTime(dt);
-                c.add(Calendar.DATE, 1);
-                dt = c.getTime();
-                return dt;
-            }else {
-                return java.sql.Date.valueOf(LocalDate.now());
-            }
+            Date dt = java.sql.Date.valueOf(LocalDate.now());
+            Calendar c = Calendar.getInstance();
+            c.setTime(dt);
+            c.add(Calendar.DATE, 1);
+            dt = c.getTime();
+            return dt;
         }
         return d;
     }

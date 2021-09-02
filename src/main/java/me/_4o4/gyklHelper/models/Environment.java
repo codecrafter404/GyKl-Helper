@@ -1,66 +1,54 @@
 package me._4o4.gyklHelper.models;
 
+import org.pmw.tinylog.Logger;
+
 import java.lang.reflect.Field;
 
 public class Environment {
-    private static String VPLAN_ANNOUNCE = "vertretungsplan";
-    private static String VPLAN_BOT = "bot";
-    private static String VPLAN_HOST = "";
-    private static String VPLAN_PASSWORD = "";
-    private static String VPLAN_TIME = "16";
-    private static String VPLAN_CLASS = "7b";
-    private static String VPLAN_DEBUG = "false";
+
+
+    static String DISCORD_TOKEN;
+    static String MONGO_CONTAINER;
+    static String MONGO_USERNAME;
+    static String MONGO_PASSWORD;
+    static String DEFAULT_LANGUAGE = "english";
+    static String BOT_ADMIN_ROLE = "bot-admin";
 
     public static void parseEnvironments() throws IllegalAccessException {
         for(Field field : Environment.class.getDeclaredFields()){
             field.setAccessible(true);
-            if(System.getenv(field.getName()) != null){
+            if(System.getenv(field.getName()) != null && System.getenv(field.getName()) != ""){
                 field.set(String.class, System.getenv(field.getName()));
             }
-            if(field.get("") == ""){
-                System.out.println("[ERROR] Environment variable '" + field.getName() + "' is not set!");
+            if(field.get("") == null){
+                Logger.error("Environment variable '" + field.getName() + "' is not set!");
                 System.exit(-1);
             }
             field.setAccessible(false);
         }
-        try{
-            if(!(Integer.parseInt(VPLAN_TIME) >= 0) || !(Integer.parseInt(VPLAN_TIME) <= 24)){
-                System.out.println("[ERROR] VPLAN_TIME is a incorrect time");
-                System.exit(-1);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            System.out.println("[ERROR] VPLAN_TIME is a incorrect time");
-            System.exit(-1);
-        }
     }
 
-    public static String getVplanDebug() {
-        return VPLAN_DEBUG;
+    public static String getDiscordToken() {
+        return DISCORD_TOKEN;
     }
 
-    public static String getVplanClass() {
-        return VPLAN_CLASS;
+    public static String getMongoContainer() {
+        return MONGO_CONTAINER;
     }
 
-    public static String getVplanAnnounce() {
-        return VPLAN_ANNOUNCE;
+    public static String getMongoUsername() {
+        return MONGO_USERNAME;
     }
 
-    public static String getVplanBot() {
-        return VPLAN_BOT;
+    public static String getMongoPassword() {
+        return MONGO_PASSWORD;
     }
 
-    public static String getVplanHost() {
-        return VPLAN_HOST;
+    public static String getDefaultLanguage() {
+        return DEFAULT_LANGUAGE;
     }
 
-    public static String getVplanPassword() {
-        return VPLAN_PASSWORD;
+    public static String getBotAdminRole() {
+        return BOT_ADMIN_ROLE;
     }
-
-    public static String getVplanTime() {
-        return VPLAN_TIME;
-    }
-
 }

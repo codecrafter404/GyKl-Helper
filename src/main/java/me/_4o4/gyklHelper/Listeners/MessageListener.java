@@ -1,24 +1,60 @@
 package me._4o4.gyklHelper.Listeners;
 
+import me._4o4.gyklHelper.Commands.CommandManager;
 import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.models.Environment;
-import me._4o4.gyklHelper.utils.Converter;
-import me._4o4.gyklHelper.utils.DateUtil;
-import me._4o4.vplanwrapper.VPlanAPI;
-import me._4o4.vplanwrapper.models.Week;
-import net.dv8tion.jda.api.EmbedBuilder;
+import me._4o4.gyklHelper.models.Server;
+import me._4o4.gyklHelper.utils.Database;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.pmw.tinylog.Logger;
 
-import java.io.ByteArrayInputStream;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
 
 public class MessageListener extends ListenerAdapter {
 
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if(event.getAuthor().isBot()) return;
+        Database database = new Database();
+        Server server = database.getServerFromID(event.getGuild().getId());
+        if(server == null){
+            //New Server
+            Logger.info("Register on new server: " + event.getGuild().getName());
+            server = Server.getDefault(event.getGuild().getId(), event.getGuild().getName());
+            try{
+                database.saveServer(server);
+            }catch (Exception e){
+                Logger.trace(e);
+                Logger.error("Can't register " + event.getGuild().getName());
+                event.getChannel().sendMessage(GyKlHelper.getLanguageManager().getLang(Environment.getDefaultLanguage()).getErr_Register()).queue();
+                return;
+            }
+        }
+        //Check is interact channel or its !config
+        if(!server.getConfig().getInteract_channel().contains(event.getChannel().getId()) && !event.getMessage().getContentRaw().equals("!config")) return;
+        //Check is defined Prefix or its !config
+        if(!event.getMessage().getContentRaw().startsWith(server.getConfig().getPrefix()) && !event.getMessage().getContentRaw().equals("!config")) return;
+
+        event.getChannel().sendTyping().queue();
+        String message = event.getMessage().getContentRaw();
+        String[] args = message.split(" ");
+        String commmand = args[0].substring(server.getConfig().getPrefix().length()).toLowerCase();
+        boolean succeed = CommandManager.runCommand(commmand, args, event, server);
+        if(!succeed){
+            event.getChannel().sendMessage(GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getErr_Command_not_found())
+                    .delay(10, TimeUnit.SECONDS)
+                    .flatMap(Message::delete)
+                    .flatMap(m -> event.getMessage().delete())
+                    .queue();
+        }
+
+    }
+
+    /*
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if(!event.getMessage().getChannel().getName().equalsIgnoreCase(Environment.getVplanBot())) return;
@@ -96,4 +132,6 @@ public class MessageListener extends ListenerAdapter {
             }
         }
     }
+    */
+
 }

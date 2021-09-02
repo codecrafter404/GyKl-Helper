@@ -62,11 +62,11 @@ body{
     <table class="styled-table">
         <thead>
             <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-                <th>Room</th>
-                <th>Info</th>
+                <th>${title_time}</th>
+                <th>${title_subject}</th>
+                <th>${title_teacher}</th>
+                <th>${title_room}</th>
+                <th>${title_info}</th>
             </tr>
         </thead>
         <tbody>
@@ -81,8 +81,8 @@ body{
           </#list>
         </tbody>
     </table>
-    <p style="font-weight: bold; color: #009879; font-size: 1.2em; margin-bottom: 0;">Informations:</p>
-    <p style="margin-top:  0; width: 45ch;">${info}</p>
+    <p style="font-weight: bold; color: #009879; font-size: 1.2em; margin-bottom: 0;">${info_title}</p>
+    <p style="margin-top:  0; width: 45ch;">${info_text}</p>
 
 </body>
 </html>

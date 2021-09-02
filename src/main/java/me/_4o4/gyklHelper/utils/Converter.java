@@ -5,10 +5,12 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import me._4o4.gyklHelper.GyKlHelper;
+import me._4o4.gyklHelper.models.Server;
 import me._4o4.gyklHelper.models.Subject;
 import me._4o4.vplanwrapper.models.Day;
 import me._4o4.vplanwrapper.models.StartTimes;
 import net.anthavio.phanbedder.Phanbedder;
+import org.pmw.tinylog.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -21,10 +23,12 @@ public class Converter {
 
     private final Day DAY;
     private final String TEMPLATE;
+    private final Server server;
 
-    public Converter(Day day, String template) {
+    public Converter(Day day, String template, Server server) {
         this.DAY = day;
         this.TEMPLATE = template;
+        this.server = server;
     }
 
     public String day2Html(StartTimes times) throws IOException, TemplateException {
@@ -55,7 +59,13 @@ public class Converter {
                 }
         );
         Map<String, Object> input = new HashMap<>();
-        input.put("info", info);
+        input.put("info_title", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getPlan_info_title());
+        input.put("info_text", info);
+        input.put("title_time", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getPlan_title_time());
+        input.put("title_subject", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getPlan_title_subject());
+        input.put("title_teacher", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getPlan_title_teacher());
+        input.put("title_room", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getPlan_title_room());
+        input.put("title_info", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getPlan_title_info());
         input.put("subjects", subjects);
 
         Template template = conf.getTemplate(TEMPLATE);
@@ -68,7 +78,7 @@ public class Converter {
 
         String html = day2Html(times);
         File phantomjs = (System.getProperty("os.arch").equals("amd64")) ? Phanbedder.unpack() : new File("/tmp/arm/phantomjs");
-        System.out.println(phantomjs.getAbsolutePath());
+        Logger.info("Extracted PhantomJS to '" + phantomjs.getAbsolutePath());
         ResourceUtil.extractResource(
                 "/convert.js",
                 System.getProperty("user.dir") + File.separator + "convert.js"

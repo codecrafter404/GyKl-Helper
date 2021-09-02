@@ -1,18 +1,28 @@
 package me._4o4.gyklHelper;
 
+import com.google.gson.Gson;
+import me._4o4.gyklHelper.Language.LanguageManager;
 import me._4o4.gyklHelper.Listeners.MessageListener;
-import me._4o4.gyklHelper.models.Config;
 import me._4o4.gyklHelper.models.Environment;
+import me._4o4.gyklHelper.models.Server;
+import me._4o4.gyklHelper.models.ServerConfig;
+import me._4o4.gyklHelper.models.ServerData;
 import me._4o4.gyklHelper.schedule.AlertSchedule;
-import me._4o4.gyklHelper.utils.ConfigParse;
+import me._4o4.gyklHelper.utils.Database;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import org.pmw.tinylog.Configurator;
+import org.pmw.tinylog.Level;
+import org.pmw.tinylog.Logger;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,29 +30,41 @@ import java.util.concurrent.TimeUnit;
 public class GyKlHelper {
     private static JDA jda = null;
     private static AlertSchedule alert = null;
+    private static LanguageManager languageManager = null;
     public static void main(String[] args) throws IOException, LoginException, IllegalAccessException, InterruptedException {
 
-        final String SECRET_DIRECTORY = "/config/secret.json";
+        Configurator.defaultConfig()
+                .level(Level.TRACE)
+                .formatPattern("{date:yyyy-MM-dd HH:mm:ss} [{thread}] {class}.{method} | {level} |    {message}")
+                .activate();
 
-        System.out.println("[INFO] We're on " + System.getProperty("os.arch"));
-        Config conf= ConfigParse.parseConfig(SECRET_DIRECTORY);
+
+        Logger.debug("We're on [" + System.getProperty("os.arch") + "]");
+
+        Logger.info("Read environments");
         Environment.parseEnvironments();
 
-        System.out.println(conf.getToken());
-        System.out.println(Environment.getVplanHost());
+        Logger.info("Load languages");
+        languageManager = new LanguageManager();
 
-        jda = JDABuilder.createDefault(conf.getToken()).build();
+        Logger.info("Start JDA");
+        jda = JDABuilder.createDefault(Environment.getDiscordToken()).build();
+        Logger.info("Wait for Bot");
         jda.awaitReady();
-        jda.getPresence().setPresence(Activity.playing("Minecraft ;)"), true);
-
+        jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB,Activity.watching("Sword Art Online"), false);
+        Logger.info("Successfully logged in");
+        Logger.info("Setup MessageListener");
         jda.addEventListener(new MessageListener());
-
-        new GyKlHelper().schedule();
+        Logger.info("Finish!");
 
     }
 
     public static JDA getJda(){
         return jda;
+    }
+
+    public static LanguageManager getLanguageManager() {
+        return languageManager;
     }
 
     public static AlertSchedule getAlert() {
