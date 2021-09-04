@@ -21,12 +21,12 @@ public class TestCommand implements Command{
 
     @Override
     public String getName() {
-        return "test";
+        return "Test";
     }
 
     @Override
     public String getDescription(Server server) {
-        return "nope";
+        return "nope:smile:";
     }
 
     @Override

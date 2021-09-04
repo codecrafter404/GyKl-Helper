@@ -35,9 +35,9 @@ public class MessageListener extends ListenerAdapter {
             }
         }
         //Check is interact channel or its !config
-        if(!server.getConfig().getInteract_channel().contains(event.getChannel().getId()) && !event.getMessage().getContentRaw().equals("!config")) return;
+        if(!server.getConfig().getInteract_channel().contains(event.getChannel().getId()) && !event.getMessage().getContentRaw().startsWith("!config")) return;
         //Check is defined Prefix or its !config
-        if(!event.getMessage().getContentRaw().startsWith(server.getConfig().getPrefix()) && !event.getMessage().getContentRaw().equals("!config")) return;
+        if(!event.getMessage().getContentRaw().startsWith(server.getConfig().getPrefix()) && !event.getMessage().getContentRaw().startsWith("!config")) return;
 
         event.getChannel().sendTyping().queue();
         String message = event.getMessage().getContentRaw();
@@ -75,7 +75,7 @@ public class MessageListener extends ListenerAdapter {
                     event.getMessage().getChannel().sendMessage("No date specified!\nUsage: !day <mm/dd/yyyy> or !day <today/heute/tomorrow/morgen>").queue();
                     break;
                 }
-                Date date = DateUtil.getDate(args[1]);
+                Date date = DateAndTimeUtil.getDate(args[1]);
                 if(date == null){
                     event.getMessage().getChannel().sendMessage("Invalid date!\nUsage: !day <mm/dd/yyyy> or !day <today/heute/tomorrow/morgen>").queue();
                     break;

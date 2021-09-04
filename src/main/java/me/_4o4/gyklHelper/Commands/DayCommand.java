@@ -3,7 +3,7 @@ package me._4o4.gyklHelper.Commands;
 import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.models.Server;
 import me._4o4.gyklHelper.utils.Converter;
-import me._4o4.gyklHelper.utils.DateUtil;
+import me._4o4.gyklHelper.utils.DateAndTimeUtil;
 import me._4o4.gyklHelper.utils.ErrorMessage;
 import me._4o4.vplanwrapper.VPlanAPI;
 import me._4o4.vplanwrapper.models.Week;
@@ -34,7 +34,7 @@ public class DayCommand implements Command{
             ).queue();
             return;
         }
-        Date date = args.length == 1 ? java.sql.Date.valueOf(LocalDate.now()) : DateUtil.getDate(args[1]);
+        Date date = args.length == 1 ? java.sql.Date.valueOf(LocalDate.now()) : DateAndTimeUtil.getDate(args[1]);
         if(date == null){
             event.getChannel().sendMessage(
                     GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getUsage_String()

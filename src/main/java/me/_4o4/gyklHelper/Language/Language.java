@@ -29,4 +29,19 @@ public interface Language {
     public String getPlan_title_info();
     public String getPlan_info_title();
     public Locale getLocal();
+    public String getConfig_Description();
+    public String getConfig_Usage();
+    public List<String> getConfig_triggers();
+    public String getConfig_i_have_no_Permission();
+    public String getConfig_u_have_no_Permission();
+    public String getConfig_failed_save_Role();
+    public String getConfig_cant_update();
+    public String getConfig_double_Object();
+    public String getConfig_object_not_found();
+    public String getConfig_options_text();
+    public String getConfig_wrong_password();
+    public List<String> getHelp_triggers();
+    public String getHelp_desciption();
+    public String getHelp_usage();
+    public String getHelp_title();
 }

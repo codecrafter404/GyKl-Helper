@@ -13,4 +13,8 @@ public class ServerData {
     public List<MutedUser> getMuted_users() {
         return muted_users;
     }
+
+    public void setMuted_users(List<MutedUser> muted_users) {
+        this.muted_users = muted_users;
+    }
 }

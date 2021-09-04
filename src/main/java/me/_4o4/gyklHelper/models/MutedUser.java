@@ -16,4 +16,12 @@ public class MutedUser {
     public int getTime() {
         return time;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
 }

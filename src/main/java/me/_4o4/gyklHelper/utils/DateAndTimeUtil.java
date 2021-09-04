@@ -6,9 +6,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class DateUtil {
+public class DateAndTimeUtil {
     public static boolean isValid(String dateStr) {
         DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         sdf.setLenient(false);
@@ -18,6 +20,20 @@ public class DateUtil {
             return false;
         }
         return true;
+    }
+    public static LocalTime parseTime(String time){
+        List<String> parseFormats = List.of(
+                "HH:mm",
+                "HH-mm",
+                "HH.mm",
+                "HH/mm"
+        );
+        for(String format : parseFormats){
+            try{
+                return LocalTime.parse(time, DateTimeFormatter.ofPattern(format));
+            }catch (Exception e){}
+        }
+        return null;
     }
     public static Date getDate(String date){
         if(date == null || date.equals("")) return null;

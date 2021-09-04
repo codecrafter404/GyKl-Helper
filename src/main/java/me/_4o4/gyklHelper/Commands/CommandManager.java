@@ -3,13 +3,16 @@ package me._4o4.gyklHelper.Commands;
 import me._4o4.gyklHelper.models.Server;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+
 import java.util.Arrays;
 import java.util.List;
 
 public class CommandManager {
     private static final List<Command> commands = Arrays.asList(
             new TestCommand(),
-            new DayCommand()
+            new DayCommand(),
+            new ConfigCommand(),
+            new HelpCommand()
     );
 
     public static boolean runCommand(String name, String[] args, MessageReceivedEvent event, Server server){
@@ -19,5 +22,8 @@ public class CommandManager {
         }
         if(cmd != null) cmd.run(args, event, server);
         return cmd != null;
+    }
+    public static List<Command> getAllCommands(){
+        return commands;
     }
 }

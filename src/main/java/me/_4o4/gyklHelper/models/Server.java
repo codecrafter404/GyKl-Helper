@@ -30,6 +30,23 @@ public class Server {
     public ServerData getData() {
         return data;
     }
+
+    public void setServer_id(String server_id) {
+        this.server_id = server_id;
+    }
+
+    public void setServer_name(String server_name) {
+        this.server_name = server_name;
+    }
+
+    public void setConfig(ServerConfig config) {
+        this.config = config;
+    }
+
+    public void setData(ServerData data) {
+        this.data = data;
+    }
+
     public static Server getDefault(String serverID, String serverName){
         return new Server(
                 serverID,
@@ -43,6 +60,7 @@ public class Server {
                         "8b",
                         "english",
                         false,
+                        "",
                         "!"
                 ),
                 new ServerData(

@@ -131,4 +131,80 @@ public class English implements Language{
         return Locale.ENGLISH;
     }
 
+    @Override
+    public String getConfig_Description() {
+        return "Use this command to configure Server Options";
+    }
+
+    @Override
+    public String getConfig_Usage() {
+        return "!config [OPTION] [VALUE] [VALUE2] [...]";
+    }
+
+    @Override
+    public List<String> getConfig_triggers() {
+        return Arrays.asList("config", "conf", "c");
+    }
+
+    @Override
+    public String getConfig_i_have_no_Permission() {
+        return "I don't have the permission to do my things.\nPlease give me admin permissions!";
+    }
+
+    @Override
+    public String getConfig_u_have_no_Permission() {
+        return "Sorry,\nyou don't have the permission to execute this command.";
+    }
+
+    @Override
+    public String getConfig_failed_save_Role() {
+        return "Failed to save Role.\nPlease try again later.\nIf the problem persists contact @Codecrafter_404#6203";
+    }
+
+    @Override
+    public String getConfig_cant_update() {
+        return "Can't update config.\nPlease try again later.\nIf the problem persists contact @Codecrafter_404#6203";
+    }
+
+    @Override
+    public String getConfig_double_Object() {
+        return "This channel is already in the list!";
+    }
+
+    @Override
+    public String getConfig_object_not_found() {
+        return "The object isn't in the List";
+    }
+
+    @Override
+    public String getConfig_options_text() {
+        return "Options";
+    }
+
+    @Override
+    public String getConfig_wrong_password() {
+        return "I've detected you try to configure a wrong password.\nPlease try again.";
+    }
+
+    @Override
+    public List<String> getHelp_triggers() {
+        return List.of("help", "h");
+    }
+
+    @Override
+    public String getHelp_desciption() {
+        return "Help!!!";
+    }
+
+    @Override
+    public String getHelp_usage() {
+        return "!help";
+    }
+
+    @Override
+    public String getHelp_title() {
+        return "Help!";
+    }
+
+
 }
