@@ -1,5 +1,6 @@
 package me._4o4.gyklHelper.Commands;
 
+import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.models.Server;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.pmw.tinylog.Logger;
@@ -10,8 +11,7 @@ import java.util.List;
 public class TestCommand implements Command{
     @Override
     public void run(String[] args, MessageReceivedEvent event, Server server) {
-        Logger.debug("TEST");
-        event.getChannel().sendMessage("Test").queue();
+        GyKlHelper.getAnnouncementScheduler().schedule(server, args[1]);
     }
 
     @Override

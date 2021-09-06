@@ -13,6 +13,7 @@ public class Environment {
     static String MONGO_PASSWORD;
     static String DEFAULT_LANGUAGE = "english";
     static String BOT_ADMIN_ROLE = "bot-admin";
+    static String TIMEZONE = "Europe/Berlin";
 
     public static void parseEnvironments() throws IllegalAccessException {
         for(Field field : Environment.class.getDeclaredFields()){
@@ -50,5 +51,9 @@ public class Environment {
 
     public static String getBotAdminRole() {
         return BOT_ADMIN_ROLE;
+    }
+
+    public static String getTIMEZONE() {
+        return TIMEZONE;
     }
 }

@@ -78,7 +78,7 @@ public class Converter {
 
         String html = day2Html(times);
         File phantomjs = (System.getProperty("os.arch").equals("amd64")) ? Phanbedder.unpack() : new File("/tmp/arm/phantomjs");
-        Logger.info("Extracted PhantomJS to '" + phantomjs.getAbsolutePath());
+        Logger.info("Extracted PhantomJS to '" + phantomjs.getAbsolutePath() + "'");
         ResourceUtil.extractResource(
                 "/convert.js",
                 System.getProperty("user.dir") + File.separator + "convert.js"

@@ -65,6 +65,9 @@ public class ConfigureTime implements Configurable{
                             String.join(", ", old))
                     ).queue();
 
+                    //Schedule announcement
+                    GyKlHelper.getAnnouncementScheduler().schedule(server, compiledTime);
+
                 }catch(Exception e){
                     Logger.trace(e);
                     Logger.warn("Can't update DB Object!");
@@ -77,7 +80,7 @@ public class ConfigureTime implements Configurable{
                 break;
             case "delete":
                 try{
-                    LocalTime date = DateAndTimeUtil.parseTime(args[2]);
+                    LocalTime date = DateAndTimeUtil.parseTime(args[3]);
                     String compiledTime = String.format("%s:%s",
                             date.getHour(),
                             date.getMinute()
@@ -100,6 +103,9 @@ public class ConfigureTime implements Configurable{
                                 compiledTime
                             )
                     ).queue();
+
+                    //Cancel announcement
+                    GyKlHelper.getAnnouncementScheduler().cancel(server, compiledTime);
 
                 }catch(Exception e){
                     Logger.trace(e);

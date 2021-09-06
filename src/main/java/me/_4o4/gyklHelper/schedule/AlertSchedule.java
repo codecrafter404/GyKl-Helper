@@ -1,124 +1,141 @@
 package me._4o4.gyklHelper.schedule;
 
-import freemarker.template.TemplateException;
 import me._4o4.gyklHelper.GyKlHelper;
-import me._4o4.gyklHelper.models.Environment;
+import me._4o4.gyklHelper.models.Server;
 import me._4o4.gyklHelper.utils.Converter;
+import me._4o4.gyklHelper.utils.Database;
+import me._4o4.gyklHelper.utils.DifferenceDatabase;
+import me._4o4.gyklHelper.utils.ErrorMessage;
 import me._4o4.vplanwrapper.VPlanAPI;
-import me._4o4.vplanwrapper.models.Day;
-import me._4o4.vplanwrapper.models.StartTimes;
-import me._4o4.vplanwrapper.models.Subject;
 import me._4o4.vplanwrapper.models.Week;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
+import org.pmw.tinylog.Logger;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 
 public class AlertSchedule implements Runnable {
 
-    List<List<Subject>> lastUpdatedWeek = new ArrayList<>();
+    private Server server;
 
-    // MessageChannel channel = GyKlHelper.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0);
+    public AlertSchedule(Server server) {
+        this.server = server;
+    }
 
     @Override
     public void run() {
-        /*
-        try{
-            Week week;
+        Server currentServer = new Database().getServerFromID(server.getServer_id());
+        if(currentServer == null) return;
+        server = currentServer;
+        //Credentials
+        if(server.getConfig().getApi_host().equals("") || server.getConfig().getApi_password().equals("")) return;
 
-            //Hour == 16
-            Date date = java.sql.Date.valueOf(LocalDate.now());
-            DayOfWeek dayOfWeek = DayOfWeek.from(LocalDate.now());
-            if(LocalTime.now().getHour() == Integer.parseInt(Environment.getVplanTime())){
-                System.out.println("Its 16? " + LocalTime.now().getHour());
-                //Ignore 5,6
-                if(dayOfWeek.getValue() == 5 || dayOfWeek.getValue() == 6) return;
-                //Announce
-                week = new VPlanAPI(
-                        Environment.getVplanHost(),
-                        Environment.getVplanPassword()
-                ).getWeek(
-                        Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))),
-                                Environment.getVplanClass()
-                );
-                if(week.getDays().get(0).getError() != ""){
-                    System.out.println("[ERROR] while generate week: " + week.getDays().get(0).getError());
-                    channel.sendMessage("An error occurred!:exploding_head:\nPlease check the plan manually!!!").queue();
-                    return;
-                }
-
-                //Save for compare
-                lastUpdatedWeek = week.getDays().get(0).getSubjects();
-                //Send Embed
-                sendDay(week.getTimes(), week.getDays().get(0), java.sql.Date.valueOf(LocalDate.now().plusDays(1)));
-
-            }else {
-                System.out.println("Checking Updated!");
-                //Ignore 6,7
-                //Check Updated
-                if(dayOfWeek.getValue() == 6 || dayOfWeek.getValue() == 7) return;
-
-                if(LocalTime.now().getHour() > Integer.parseInt(Environment.getVplanTime()) && !(dayOfWeek.getValue() == 5)){
-                    date = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
-                }
-
-                week = new VPlanAPI(
-                        Environment.getVplanHost(),
-                        Environment.getVplanPassword()
-                ).getWeek(
-                        Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(date)),
-                        Environment.getVplanClass()
-                );
-                if(week.getDays().get(0).getError() != ""){
-                    System.out.println("[ERROR] while generate week: " + week.getDays().get(0).getError());
-                    channel.sendMessage("An error occurred!:exploding_head:\nPlease check the plan manually!!!").queue();
-                    return;
-                }
-
-                boolean isDiff = false;
-
-                if(lastUpdatedWeek.size() == week.getDays().get(0).getSubjects().size()) {
-                    for (int i = 0; i < lastUpdatedWeek.size(); i++) {
-                        isDiff = !lastUpdatedWeek.get(i).get(0).getName_full().equals(week.getDays().get(0).getSubjects().get(i).get(0).getName_full());
-                        if(!isDiff) isDiff = !lastUpdatedWeek.get(i).get(0).getRoom_name().equals(week.getDays().get(0).getSubjects().get(i).get(0).getRoom_name());
-                        if(!isDiff) isDiff = !lastUpdatedWeek.get(i).get(0).getTeacher().get(0).getName().equals(week.getDays().get(0).getSubjects().get(i).get(0).getTeacher().get(0).getName());
-                    }
-                }else {
-                    isDiff = true;
-                }
-                if(isDiff){
-                    lastUpdatedWeek = week.getDays().get(0).getSubjects();
-                    sendDay(week.getTimes(), week.getDays().get(0), date);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            channel.sendMessage("An error occurred!:exploding_head:\nPlease check the plan manually!!!").queue();
+        //Day of week
+        List<DayOfWeek> blacklistedDays = List.of(
+                DayOfWeek.FRIDAY,
+                DayOfWeek.SATURDAY
+        );
+        if(blacklistedDays.contains(LocalDate.now().getDayOfWeek())){
+            Logger.debug(String.format("Skip Task: %s(%s)",
+                        server.getServer_name(),
+                    LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
+                    ));
             return;
+        }
+
+        LocalDate date = LocalDate.now().plusDays(1);
+
+        //Send Plan
+        Week week =  null;
+        try{
+            week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password()).getWeek(
+                    Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(date)),
+                    server.getConfig().getDefault_class()
+            );
+        }catch (Exception e){
+            Logger.error(String.format("Error while fetch data;\n Server: %s\nDate: %s\nHost: %s", server.getServer_name(), new SimpleDateFormat(
+                    "EEEEE, dd.MM.yyyy",
+                    GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()
+            ).format(date), server.getConfig().getApi_host()));
+            Logger.trace(e);
+           sendMessageToAnnouncement(GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getDay_API_Not_reachable());
+            return;
+        }
+
+
+        if(!week.getError().equals("")){
+            //API error, e.g. wrong password
+            sendMessageToAnnouncement(ErrorMessage.getErrorMessageForError(server.getConfig().getLanguage(), week.getError()));
+            return;
+        }
+
+        if(!week.getDays().get(0).getError().equals("")){
+            //Error in day, e.g. invalid date
+            sendMessageToAnnouncement(ErrorMessage.getErrorMessageForError(server.getConfig().getLanguage(), week.getDays().get(0).getError()));
+            return;
+        }
+        //Add to Difference Cache
+        DifferenceDatabase.update(server.getServer_id(), week.getDays().get(0).getSubjects());
+        DifferenceDatabase.updateDate(server.getServer_id(), LocalDateTime.now());
+
+        //Try to send Image,
+        try{
+            Converter converter = new Converter(
+                    week.getDays().get(0),
+                    "table.ftl",
+                    server
+            );
+
+            //Build Embed
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy",GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(date));
+            embed.setImage("attachment://plan.png");
+
+            for(String channelID : server.getConfig().getAnnouncement_channel()){
+                Guild guild = GyKlHelper.getJda().
+                        getGuildById(server.getServer_id());
+                if(guild == null) return;
+                TextChannel channel = guild.getTextChannelById(channelID);
+                if(channel == null){
+                    server.getConfig().getAnnouncement_channel().remove(channelID);
+                    return;
+                }
+                channel.sendMessageEmbeds(embed.build())
+                        .addFile(new ByteArrayInputStream(converter.image2ByteArray(week.getTimes())), "plan.png")
+                        .queue();
+            }
+
+
+        }catch(Exception e){
+            Logger.warn("The image generation failed");
+            Logger.trace(e);
+            sendMessageToAnnouncement(GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getDay_Image_failed());
         }
     }
 
+    private void sendMessageToAnnouncement(String message){
+        server.getConfig().getAnnouncement_channel().forEach(
+                channelID -> {
+                    Guild guild = GyKlHelper.getJda().
+                            getGuildById(server.getServer_id());
+                    if(guild == null) return;
+                    TextChannel channel = guild.getTextChannelById(channelID);
+                    if(channel == null){
+                        server.getConfig().getAnnouncement_channel().remove(channelID);
+                        return;
+                    }
+                    channel.sendMessage(message).queue();
+                }
+            );
 
-    public void sendDay(StartTimes times, Day day, Date dateToSend) throws TemplateException, IOException, InterruptedException {
-        Converter converter = new Converter(
-                day,
-                "table.ftl"
-        );
-
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy").format(dateToSend));
-        embed.setImage("attachment://plan.png");
-
-        GyKlHelper.getJda().getTextChannelsByName(Environment.getVplanAnnounce(), true).get(0).sendMessage(embed.build())
-                .addFile(new ByteArrayInputStream(converter.image2ByteArray(times)), "plan.png")
-                .queue();
-         */
     }
-
 }

@@ -61,6 +61,8 @@ public class ConfigureAnnouncementChannel implements Configurable{
                             "#" + channel.getName(),
                             String.join(", ", old))
                     ).queue();
+
+
                 }catch(Exception e){
                     Logger.trace(e);
                     Logger.warn("Can't update DB Object!");

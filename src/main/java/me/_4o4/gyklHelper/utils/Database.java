@@ -4,10 +4,14 @@ import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import me._4o4.gyklHelper.models.Environment;
 import me._4o4.gyklHelper.models.Server;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
 
@@ -22,6 +26,7 @@ public class Database {
 
         Document toSearch = new Document("server_id", serverID);
         Document result = collection.find(toSearch).cursor().hasNext() ? (Document) collection.find(toSearch).cursor().next() : null;
+        mongo.close();
         return result == null ? null : new Gson().fromJson(result.toJson(), Server.class);
     }
     public void updateServer(@NotNull String serverID, @NotNull Server server){
@@ -35,9 +40,23 @@ public class Database {
         Document toSave = Document.parse(new Gson().toJson(server));
         Document toReplace = new Document("server_id", serverID);
         Document update = new Document("$set", toSave);
-
         collection.updateOne(toReplace, update);
+        mongo.close();
     }
+
+    public void deleteServer(@NotNull String serverID){
+        MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
+                Environment.getMongoUsername(),
+                Environment.getMongoPassword(),
+                Environment.getMongoContainer()
+        ));
+        MongoCollection<Document> collection = mongo.getDatabase("GyKl-Helper").getCollection("Server");
+        collection.deleteOne(
+                new Document("server_id", serverID)
+        );
+        mongo.close();
+    }
+
     public void saveServer(@NotNull Server server) {
         MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
                     Environment.getMongoUsername(),
@@ -48,5 +67,26 @@ public class Database {
 
         Document toSave = Document.parse(new Gson().toJson(server));
         collection.insertOne(toSave);
+        mongo.close();
+    }
+
+    public List<Server> getAllServers(){
+        MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
+                Environment.getMongoUsername(),
+                Environment.getMongoPassword(),
+                Environment.getMongoContainer()
+        ));
+        MongoCollection<Document> collection = mongo.getDatabase("GyKl-Helper").getCollection("Server");
+        MongoCursor <Document> cursor = collection.find().cursor();
+
+        List<Server> result = new ArrayList<>();
+
+        while(cursor.hasNext()){
+            result.add(
+                    new Gson().fromJson(cursor.next().toJson(), Server.class)
+            );
+        }
+        mongo.close();
+        return result;
     }
 }
