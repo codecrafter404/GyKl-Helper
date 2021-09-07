@@ -53,19 +53,18 @@ public class AlertSchedule implements Runnable {
         }
 
         LocalDate date = LocalDate.now().plusDays(1);
-
         //Send Plan
         Week week =  null;
         try{
             week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password()).getWeek(
-                    Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(date)),
+                    Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(date))),
                     server.getConfig().getDefault_class()
             );
         }catch (Exception e){
             Logger.error(String.format("Error while fetch data;\n Server: %s\nDate: %s\nHost: %s", server.getServer_name(), new SimpleDateFormat(
                     "EEEEE, dd.MM.yyyy",
                     GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()
-            ).format(date), server.getConfig().getApi_host()));
+            ).format(java.sql.Date.valueOf(date)), server.getConfig().getApi_host()));
             Logger.trace(e);
            sendMessageToAnnouncement(GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getDay_API_Not_reachable());
             return;
@@ -97,7 +96,7 @@ public class AlertSchedule implements Runnable {
 
             //Build Embed
             EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy",GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(date));
+            embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy",GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(java.sql.Date.valueOf(date)));
             embed.setImage("attachment://plan.png");
 
             for(String channelID : server.getConfig().getAnnouncement_channel()){

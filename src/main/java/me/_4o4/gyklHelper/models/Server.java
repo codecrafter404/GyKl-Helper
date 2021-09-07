@@ -3,8 +3,8 @@ package me._4o4.gyklHelper.models;
 import java.util.Arrays;
 
 public class Server {
-    String server_id = "";
-    String server_name = "";
+    String server_id;
+    String server_name;
     ServerConfig config;
     ServerData data;
 
@@ -64,7 +64,7 @@ public class Server {
                         "!"
                 ),
                 new ServerData(
-                        Arrays.asList()
+
                 )
         );
     }

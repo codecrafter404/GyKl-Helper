@@ -28,7 +28,7 @@ public class GyKlHelper {
     private static AlertSchedule alert = null;
     private static LanguageManager languageManager = null;
     private static AnnouncementScheduler announcementScheduler = null;
-    public static void main(String[] args) throws IOException, LoginException, IllegalAccessException, InterruptedException {
+    public static void main(String[] args) throws LoginException, IllegalAccessException, InterruptedException {
         try{
             TimeZone.setDefault(TimeZone.getTimeZone(Environment.getTIMEZONE()));
         }catch (Exception e){
@@ -93,6 +93,6 @@ public class GyKlHelper {
     }
     private static void scheduleDifferenceChecker(){
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(new DifferenceScheduler(), 0, 2, TimeUnit.MINUTES);
+        executorService.scheduleAtFixedRate(new DifferenceScheduler(), 0, 15, TimeUnit.MINUTES);
     }
 }

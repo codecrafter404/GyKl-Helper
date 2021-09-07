@@ -9,7 +9,6 @@ import java.util.List;
 
 public class CommandManager {
     private static final List<Command> commands = Arrays.asList(
-            new TestCommand(),
             new DayCommand(),
             new ConfigCommand(),
             new HelpCommand()

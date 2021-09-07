@@ -10,6 +10,7 @@ import org.pmw.tinylog.Logger;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ConfigureTime implements Configurable{
@@ -41,10 +42,11 @@ public class ConfigureTime implements Configurable{
             case "add":
                 try{
                     LocalTime date = DateAndTimeUtil.parseTime(args[3]);
-                    String compiledTime = String.format("%s:%s",
-                                date.getHour(),
-                                date.getMinute()
-                            );
+                    if(date == null){
+                        message.getChannel().sendMessage(GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getAPI_Invalid_date()).queue();
+                        return;
+                    }
+                    String compiledTime = DateTimeFormatter.ofPattern("HH:mm").format(date);
                     if(server.getConfig().getAnnouncement_time().contains(compiledTime)){
                         message.getChannel().sendMessage(
                                 GyKlHelper
@@ -81,10 +83,11 @@ public class ConfigureTime implements Configurable{
             case "delete":
                 try{
                     LocalTime date = DateAndTimeUtil.parseTime(args[3]);
-                    String compiledTime = String.format("%s:%s",
-                            date.getHour(),
-                            date.getMinute()
-                    );
+                    if(date == null){
+                        message.getChannel().sendMessage(GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getAPI_Invalid_date()).queue();
+                        return;
+                    }
+                    String compiledTime = DateTimeFormatter.ofPattern("HH:mm").format(date);
                     if(!server.getConfig().getAnnouncement_time().contains(compiledTime)){
                         message.getChannel().sendMessage(
                                 GyKlHelper

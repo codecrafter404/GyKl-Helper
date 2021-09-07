@@ -72,13 +72,9 @@ public class AnnouncementScheduler {
 
     public void scheduleAllDefinedAnnouncements(){
         new Database().getAllServers().forEach(
-                server ->{
-                    server.getConfig().getAnnouncement_time().forEach(
-                            time ->{
-                                schedule(server, time);
-                            }
-                    );
-                }
+                server -> server.getConfig().getAnnouncement_time().forEach(
+                        time -> schedule(server, time)
+                )
         );
     }
 
@@ -94,7 +90,9 @@ public class AnnouncementScheduler {
 
     private long millisToTime(String time){
         LocalTime t = DateAndTimeUtil.parseTime(time);
-        if(t == null) return 0L;
+        if(t == null){
+            return 0L;
+        }
         LocalDateTime date;
         if(LocalTime.now().until(t, ChronoUnit.MILLIS) > 1000){
             //This day

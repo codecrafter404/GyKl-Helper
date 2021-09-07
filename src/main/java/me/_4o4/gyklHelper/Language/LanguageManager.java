@@ -5,13 +5,14 @@ import java.util.List;
 
 public class LanguageManager {
     private List<Language> languages = Arrays.asList(
-            new English()
+            new English(),
+            new German()
     );
 
     public Language getLang(String lang){
         Language result = null;
         for(Language language : languages){
-            if(language.getName().toLowerCase().equals(lang.toLowerCase())){
+            if(language.getName().equalsIgnoreCase(lang)){
                 result = language;
             }
         }
