@@ -1,12 +1,11 @@
 package me._4o4.gyklHelper.schedule;
 
 import me._4o4.gyklHelper.GyKlHelper;
+import me._4o4.gyklHelper.models.CachedEntity;
 import me._4o4.gyklHelper.models.Server;
-import me._4o4.gyklHelper.utils.Converter;
-import me._4o4.gyklHelper.utils.Database;
-import me._4o4.gyklHelper.utils.DifferenceDatabase;
-import me._4o4.gyklHelper.utils.ErrorMessage;
+import me._4o4.gyklHelper.utils.*;
 import me._4o4.vplanwrapper.VPlanAPI;
+import me._4o4.vplanwrapper.models.Date;
 import me._4o4.vplanwrapper.models.Week;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 
 public class AlertSchedule implements Runnable {
@@ -33,6 +31,12 @@ public class AlertSchedule implements Runnable {
 
     @Override
     public void run() {
+        //Check network connection
+        if(!NetworkUtil.isNetworkAvailable()){
+            Logger.error("Can't run alert: Network unavailable!");
+            return;
+        }
+
         Server currentServer = new Database().getServerFromID(server.getServer_id());
         if(currentServer == null) return;
         server = currentServer;
@@ -56,8 +60,8 @@ public class AlertSchedule implements Runnable {
         //Send Plan
         Week week =  null;
         try{
-            week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password()).getWeek(
-                    Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(date))),
+            week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password(), true).getWeek(
+                    List.of(new Date(new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(date)), 0)),
                     server.getConfig().getDefault_class()
             );
         }catch (Exception e){
@@ -82,9 +86,14 @@ public class AlertSchedule implements Runnable {
             sendMessageToAnnouncement(ErrorMessage.getErrorMessageForError(server.getConfig().getLanguage(), week.getDays().get(0).getError()));
             return;
         }
-        //Add to Difference Cache
-        DifferenceDatabase.update(server.getServer_id(), week.getDays().get(0).getSubjects());
-        DifferenceDatabase.updateDate(server.getServer_id(), LocalDateTime.now());
+        //Add to Cache
+        server.getData().setCache(new CachedEntity(week.getDays().get(0).getTimestamp(), new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(date))));
+        try{
+            new Database().updateServer(server.getServer_id(), server);
+        }catch (Exception e){
+            Logger.error("Can't update cache!");
+            Logger.trace(e);
+        }
 
         //Try to send Image,
         try{

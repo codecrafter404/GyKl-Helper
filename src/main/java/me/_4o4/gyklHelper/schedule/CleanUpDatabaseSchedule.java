@@ -2,6 +2,7 @@ package me._4o4.gyklHelper.schedule;
 
 import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.utils.Database;
+import me._4o4.gyklHelper.utils.NetworkUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import org.pmw.tinylog.Logger;
 
@@ -9,6 +10,12 @@ public class CleanUpDatabaseSchedule implements Runnable{
 
     @Override
     public void run() {
+        //Check network connection
+        if(!NetworkUtil.isNetworkAvailable()){
+            Logger.error("Can't run CleanUpServer: Network unavailable!");
+            return;
+        }
+
         new Database().getAllServers().forEach(
                 server -> {
                     Guild guild = GyKlHelper.getJda().getGuildById(server.getServer_id());

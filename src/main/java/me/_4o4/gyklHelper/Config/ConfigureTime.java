@@ -93,7 +93,7 @@ public class ConfigureTime implements Configurable{
                                 GyKlHelper
                                         .getLanguageManager()
                                         .getLang(server.getConfig().getLanguage())
-                                        .getConfig_double_Object()
+                                        .getConfig_object_not_found()
                         ).queue();
                         return;
                     }

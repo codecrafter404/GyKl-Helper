@@ -5,6 +5,7 @@ import me._4o4.gyklHelper.models.Server;
 import me._4o4.gyklHelper.utils.Database;
 import me._4o4.vplanwrapper.VPlanAPI;
 import net.dv8tion.jda.api.entities.Message;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.pmw.tinylog.Logger;
 
 public class ConfigurePassword implements Configurable{
@@ -36,7 +37,7 @@ public class ConfigurePassword implements Configurable{
             try{
                 VPlanAPI api = new VPlanAPI(
                         server.getConfig().getApi_host(),
-                        "Doesn't matter"
+                        "Doesn't matter", false
                 );
 
                 if(!api.checkPassword(args[2])){
@@ -51,7 +52,7 @@ public class ConfigurePassword implements Configurable{
             }
         }
         try{
-            server.getConfig().setApi_password(args[2]);
+            server.getConfig().setApi_password(DigestUtils.md5Hex(args[2]));
             new Database().updateServer(server.getServer_id(), server);
             message.getChannel().sendMessage(
                     String.format("[:lock:] -> '%s'", args[2])

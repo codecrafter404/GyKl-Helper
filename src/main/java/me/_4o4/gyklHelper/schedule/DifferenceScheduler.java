@@ -4,8 +4,9 @@ import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.models.Server;
 import me._4o4.gyklHelper.utils.Converter;
 import me._4o4.gyklHelper.utils.Database;
-import me._4o4.gyklHelper.utils.DifferenceDatabase;
+import me._4o4.gyklHelper.utils.NetworkUtil;
 import me._4o4.vplanwrapper.VPlanAPI;
+import me._4o4.vplanwrapper.models.Date;
 import me._4o4.vplanwrapper.models.Subject;
 import me._4o4.vplanwrapper.models.Week;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,6 +25,12 @@ public class DifferenceScheduler implements Runnable{
 
     @Override
     public void run() {
+        //Check network connection
+        if(!NetworkUtil.isNetworkAvailable()){
+            Logger.error("Can't run difference check: Network unavailable!");
+            return;
+        }
+
         //Day of week
         List<DayOfWeek> blacklistedDays = List.of(
                 DayOfWeek.FRIDAY,
@@ -38,8 +45,44 @@ public class DifferenceScheduler implements Runnable{
                 server -> {
                     if(server.getConfig().getAnnouncement_channel().size() == 0) return;
                     if(server.getConfig().getApi_host().equals("") || server.getConfig().getApi_password().equals("")) return;
-                    //Check recently checked
+                    if(server.getData().getCache() == null) return;
 
+                    //Check if data has changed
+                    Week week = getWeek(server);
+                    if(week == null) return;
+                    boolean hasChanged = !week.getDays().get(0).getChanged_info().equals("DATA_NOT_CHANGED");
+                    if(!hasChanged) return;
+
+
+                    try{
+                        Converter converter = new Converter(
+                                week.getDays().get(0),
+                                "table.ftl",
+                                server
+                        );
+
+                        //Build Embed
+                        EmbedBuilder embed = new EmbedBuilder();
+                        embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(java.sql.Date.valueOf(LocalDate.now().plusDays(1))));
+                        embed.setImage("attachment://plan.png");
+
+                        for(String channel : server.getConfig().getAnnouncement_channel()){
+                            try{
+                                GyKlHelper.getJda().getGuildById(server.getServer_id()).getTextChannelById(channel).sendMessageEmbeds(embed.build())
+                                        .addFile(new ByteArrayInputStream(converter.image2ByteArray(week.getTimes())), "plan.png")
+                                        .queue();
+                            }catch (NullPointerException e){
+                                //Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService
+                                Logger.debug("Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService");
+                                continue;
+                            }
+                        }
+
+                    }catch(Exception e){
+                        Logger.warn(String.format("Image generation failed... Server: %s", server.getServer_name()));
+                    }
+                    //Check recently checked
+                    /*
                     if(
                             DifferenceDatabase.getDates().containsKey(server.getServer_id()) &&
                             DifferenceDatabase.getDates().get(server.getServer_id()).until(LocalDateTime.now(), ChronoUnit.MINUTES)
@@ -59,35 +102,8 @@ public class DifferenceScheduler implements Runnable{
                         return;
                     }else {
                         DifferenceDatabase.update(server.getServer_id(), currentWeek.getDays().get(0).getSubjects());
-                    }
+                    }*/
 
-                    try{
-                        Converter converter = new Converter(
-                                currentWeek.getDays().get(0),
-                                "table.ftl",
-                                server
-                        );
-
-                        //Build Embed
-                        EmbedBuilder embed = new EmbedBuilder();
-                        embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(java.sql.Date.valueOf(LocalDate.now().plusDays(1))));
-                        embed.setImage("attachment://plan.png");
-
-                        for(String channel : server.getConfig().getAnnouncement_channel()){
-                            try{
-                                GyKlHelper.getJda().getGuildById(server.getServer_id()).getTextChannelById(channel).sendMessageEmbeds(embed.build())
-                                        .addFile(new ByteArrayInputStream(converter.image2ByteArray(currentWeek.getTimes())), "plan.png")
-                                        .queue();
-                            }catch (Exception e){
-                                //Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService
-                                Logger.debug("Wrong Channel");
-                                continue;
-                            }
-                        }
-
-                    }catch(Exception e){
-                        Logger.warn(String.format("Image generation failed... Server: %s", server.getServer_name()));
-                    }
                 }
         );
     }
@@ -95,8 +111,8 @@ public class DifferenceScheduler implements Runnable{
     private Week getWeek(Server server){
         Week result = null;
         try{
-            Week week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password())
-                    .getWeek(List.of(new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))), server.getConfig().getDefault_class());
+            Week week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password(), true)
+                    .getWeek(List.of(new Date(server.getData().getCache().getDate(), Integer.parseInt(server.getData().getCache().getTimestamp()))), server.getConfig().getDefault_class());
             if(week.getError().equals("") && week.getDays().get(0).getError().equals("")) result = week;
         }catch (Exception e){
             Logger.warn(String.format("Can't download Subjects for server '%s'", server.getServer_name()));

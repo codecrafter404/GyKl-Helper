@@ -1,8 +1,18 @@
 package me._4o4.gyklHelper.models;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerData {
+    private CachedEntity cache;
 
+    public ServerData(CachedEntity cache) {
+        this.cache = cache;
+    }
+
+    public CachedEntity getCache() {
+        return cache;
+    }
+
+    public void setCache(CachedEntity cache) {
+        this.cache = cache;
+    }
 }

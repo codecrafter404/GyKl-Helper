@@ -1,6 +1,7 @@
 package me._4o4.gyklHelper.models;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Server {
     String server_id;
@@ -64,7 +65,7 @@ public class Server {
                         "!"
                 ),
                 new ServerData(
-
+                        null
                 )
         );
     }

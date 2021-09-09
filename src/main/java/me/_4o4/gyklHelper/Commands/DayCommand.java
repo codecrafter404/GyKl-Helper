@@ -44,8 +44,8 @@ public class DayCommand implements Command{
         }
         Week week =  null;
         try{
-            week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password()).getWeek(
-                    Arrays.asList(new SimpleDateFormat("yyyy-MM-dd").format(date)),
+            week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password(), true).getWeek(
+                    List.of(new me._4o4.vplanwrapper.models.Date(new SimpleDateFormat("yyyy-MM-dd").format(date), 0)),
                     server.getConfig().getDefault_class()
             );
         }catch (Exception e){
