@@ -1,22 +1,10 @@
 package me._4o4.gyklHelper.utils;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import me._4o4.gyklHelper.GyKlHelper;
+import net.dv8tion.jda.api.JDA;
 
 public class NetworkUtil {
     public static boolean isNetworkAvailable(){
-        try {
-            URL url = new URL("http://discord.com");
-            URLConnection conn = url.openConnection();
-            conn.connect();
-            conn.getInputStream().close();
-            return true;
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            return false;
-        }
+        return GyKlHelper.getJda().getStatus() == JDA.Status.CONNECTED;
     }
 }
