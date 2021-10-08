@@ -7,6 +7,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class manages the commands
+ */
 public class CommandManager {
     private static final List<Command> commands = Arrays.asList(
             new DayCommand(),

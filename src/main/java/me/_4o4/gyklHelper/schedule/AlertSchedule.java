@@ -5,8 +5,8 @@ import me._4o4.gyklHelper.models.CachedEntity;
 import me._4o4.gyklHelper.models.Server;
 import me._4o4.gyklHelper.utils.*;
 import me._4o4.vplanwrapper.VPlanAPI;
-import me._4o4.vplanwrapper.models.Date;
-import me._4o4.vplanwrapper.models.Week;
+import me._4o4.vplanwrapper.api.Week;
+import me._4o4.vplanwrapper.models.RequestDate;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -16,11 +16,13 @@ import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * This alert sends the plan for the next day when its triggered
+ */
 public class AlertSchedule implements Runnable {
 
     private Server server;
@@ -58,10 +60,10 @@ public class AlertSchedule implements Runnable {
 
         LocalDate date = LocalDate.now().plusDays(1);
         //Send Plan
-        Week week =  null;
+        Week week;
         try{
             week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password(), true).getWeek(
-                    List.of(new Date(new SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf(date)), 0)),
+                    List.of(new RequestDate(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), 0)),
                     server.getConfig().getDefault_class()
             );
         }catch (Exception e){
@@ -97,12 +99,6 @@ public class AlertSchedule implements Runnable {
 
         //Try to send Image,
         try{
-            Converter converter = new Converter(
-                    week.getDays().get(0),
-                    "table.ftl",
-                    server
-            );
-
             //Build Embed
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy",GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(java.sql.Date.valueOf(date)));
@@ -118,7 +114,7 @@ public class AlertSchedule implements Runnable {
                     return;
                 }
                 channel.sendMessageEmbeds(embed.build())
-                        .addFile(new ByteArrayInputStream(converter.image2ByteArray(week.getTimes())), "plan.png")
+                        .addFile(new ByteArrayInputStream(HtmlConverter.image2ByteArray(week.getDays().get(0), week.getTimeTable(), "table.ftl", server)), "plan.png")
                         .queue();
             }
 

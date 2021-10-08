@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The English Language
+ */
 public class English implements Language{
     @Override
     public String getName() {
@@ -204,6 +207,11 @@ public class English implements Language{
     @Override
     public String getHelp_title() {
         return "Help!";
+    }
+
+    @Override
+    public String getIsWeekEnd() {
+        return "Sorry, on this day is weekend";
     }
 
 

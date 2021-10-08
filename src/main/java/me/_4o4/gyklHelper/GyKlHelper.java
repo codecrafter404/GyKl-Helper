@@ -16,13 +16,14 @@ import org.pmw.tinylog.Level;
 import org.pmw.tinylog.Logger;
 
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.time.temporal.ChronoUnit;
 import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The main class of the Bot
+ */
 public class GyKlHelper {
     private static JDA jda = null;
     private static AlertSchedule alert = null;
