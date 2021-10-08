@@ -17,6 +17,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class is a scheduler message
+ */
 public class AnnouncementScheduler {
 
     List<AnnouncementTask> tasks = new ArrayList<>();

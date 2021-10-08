@@ -16,6 +16,12 @@ import java.util.List;
 public class Database {
 
 
+    /**
+     * Gets the server from the database using a ID
+     *
+     * @param serverID the id of the server
+     * @return the server object from the database, if not found: null
+     */
     public Server getServerFromID(@NotNull String serverID) {
         MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
                 Environment.getMongoUsername(),
@@ -29,6 +35,13 @@ public class Database {
         mongo.close();
         return result == null ? null : new Gson().fromJson(result.toJson(), Server.class);
     }
+
+    /**
+     * This method updates the server object in the database
+     *
+     * @param serverID the id of the server
+     * @param server the replacement
+     */
     public void updateServer(@NotNull String serverID, @NotNull Server server){
         MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
                 Environment.getMongoUsername(),
@@ -44,6 +57,11 @@ public class Database {
         mongo.close();
     }
 
+    /**
+     * This method deletes a server from the database
+     *
+     * @param serverID server to delete
+     */
     public void deleteServer(@NotNull String serverID){
         MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
                 Environment.getMongoUsername(),
@@ -57,6 +75,11 @@ public class Database {
         mongo.close();
     }
 
+    /**
+     * This method saves a server
+     *
+     * @param server server to save
+     */
     public void saveServer(@NotNull Server server) {
         MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
                     Environment.getMongoUsername(),
@@ -70,6 +93,11 @@ public class Database {
         mongo.close();
     }
 
+    /**
+     * Fetch all servers from the database
+     *
+     * @return a list of the founded servers
+     */
     public List<Server> getAllServers(){
         MongoClient mongo = MongoClients.create(String.format("mongodb://%s:%s@%s:27017",
                 Environment.getMongoUsername(),

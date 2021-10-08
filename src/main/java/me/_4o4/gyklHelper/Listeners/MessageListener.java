@@ -14,6 +14,9 @@ import org.pmw.tinylog.Logger;
 import java.util.concurrent.TimeUnit;
 
 
+/**
+ * When a message is received
+ */
 public class MessageListener extends ListenerAdapter {
 
     @Override
@@ -91,7 +94,7 @@ public class MessageListener extends ListenerAdapter {
                         event.getMessage().getChannel().sendMessage("Day not found, not available or its on weekend!:face_with_monocle:").queue();
                         break;
                     }
-                    Converter converter = new Converter(
+                    HtmlConverter converter = new HtmlConverter(
                             week.getDays().get(0),
                             "table.ftl"
                     );

@@ -8,6 +8,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The help command
+ */
 public class HelpCommand implements Command{
     @Override
     public void run(String[] args, MessageReceivedEvent event, Server server) {

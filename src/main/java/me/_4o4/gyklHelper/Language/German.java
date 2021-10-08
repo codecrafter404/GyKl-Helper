@@ -3,6 +3,9 @@ package me._4o4.gyklHelper.Language;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The German Language
+ */
 public class German implements Language{
     @Override
     public String getName() {
@@ -202,5 +205,10 @@ public class German implements Language{
     @Override
     public String getHelp_title() {
         return "Hilfe!!!";
+    }
+
+    @Override
+    public String getIsWeekEnd() {
+        return "An diesem Tag ist Wochenende";
     }
 }

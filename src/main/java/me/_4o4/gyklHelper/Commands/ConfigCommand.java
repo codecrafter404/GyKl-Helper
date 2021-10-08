@@ -16,6 +16,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command to configure the bot
+ */
 public class ConfigCommand implements Command{
     @Override
     public void run(String[] args, MessageReceivedEvent event, Server server) {

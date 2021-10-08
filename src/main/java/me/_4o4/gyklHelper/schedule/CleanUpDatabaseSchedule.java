@@ -6,6 +6,9 @@ import me._4o4.gyklHelper.utils.NetworkUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import org.pmw.tinylog.Logger;
 
+/**
+ * This schedule is used to clean up the database
+ */
 public class CleanUpDatabaseSchedule implements Runnable{
 
     @Override

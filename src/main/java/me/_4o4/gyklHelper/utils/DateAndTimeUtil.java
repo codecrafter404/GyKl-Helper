@@ -11,6 +11,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DateAndTimeUtil {
+    /**
+     * This method validates a specified string as a date
+     *
+     * @param dateStr date to validate
+     * @return true if valid, else false
+     */
     public static boolean isValid(String dateStr) {
         DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         sdf.setLenient(false);
@@ -21,6 +27,13 @@ public class DateAndTimeUtil {
         }
         return true;
     }
+
+    /**
+     * This method parse a string to localtime
+     *
+     * @param time time to parse
+     * @return null, if an error occurred, else the parsed time as localtime
+     */
     public static LocalTime parseTime(String time){
         List<String> parseFormats = List.of(
                 "HH:mm",
@@ -35,6 +48,13 @@ public class DateAndTimeUtil {
         }
         return null;
     }
+
+    /**
+     * This method parse string to a date
+     *
+     * @param date date to parse from
+     * @return null if error, else the parsed date
+     */
     public static Date getDate(String date){
         if(date == null || date.equals("")) return null;
         DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");

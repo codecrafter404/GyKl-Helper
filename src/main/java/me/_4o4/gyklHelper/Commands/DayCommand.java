@@ -2,11 +2,13 @@ package me._4o4.gyklHelper.Commands;
 
 import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.models.Server;
-import me._4o4.gyklHelper.utils.Converter;
+import me._4o4.gyklHelper.utils.HtmlConverter;
 import me._4o4.gyklHelper.utils.DateAndTimeUtil;
 import me._4o4.gyklHelper.utils.ErrorMessage;
 import me._4o4.vplanwrapper.VPlanAPI;
-import me._4o4.vplanwrapper.models.Week;
+
+import me._4o4.vplanwrapper.api.Week;
+import me._4o4.vplanwrapper.models.RequestDate;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.pmw.tinylog.Logger;
@@ -42,12 +44,14 @@ public class DayCommand implements Command{
             ).queue();
             return;
         }
-        Week week =  null;
+        Week week;
         try{
+
             week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password(), true).getWeek(
-                    List.of(new me._4o4.vplanwrapper.models.Date(new SimpleDateFormat("yyyy-MM-dd").format(date), 0)),
+                    List.of(new RequestDate(new SimpleDateFormat("yyyy-MM-dd").format(date), 0)),
                     server.getConfig().getDefault_class()
             );
+
         }catch (Exception e){
             Logger.error(String.format("Error while fetch data;\n Server: %s\nDate: %s\nHost: %s", server.getServer_name(), new SimpleDateFormat(
                     "EEEEE, dd.MM.yyyy",
@@ -77,11 +81,6 @@ public class DayCommand implements Command{
 
         //Try to send Image, if fails send Fallback
         try{
-            Converter converter = new Converter(
-                    week.getDays().get(0),
-                    "table.ftl",
-                    server
-            );
 
             //Build Embed
             EmbedBuilder embed = new EmbedBuilder();
@@ -89,7 +88,7 @@ public class DayCommand implements Command{
             embed.setImage("attachment://plan.png");
 
             event.getChannel().sendMessageEmbeds(embed.build())
-                    .addFile(new ByteArrayInputStream(converter.image2ByteArray(week.getTimes())), "plan.png")
+                    .addFile(new ByteArrayInputStream(HtmlConverter.image2ByteArray(week.getDays().get(0), week.getTimeTable(), "table.ftl", server)), "plan.png")
                     .queue();
 
         }catch(Exception e){
@@ -104,9 +103,7 @@ public class DayCommand implements Command{
         List<String> triggers = new ArrayList<>();
 
         GyKlHelper.getLanguageManager().getAllLanguages().forEach(
-                l ->{
-                    triggers.addAll(l.getDay_Triggers());
-                });
+                l -> triggers.addAll(l.getDay_Triggers()));
         return triggers;
     }
 

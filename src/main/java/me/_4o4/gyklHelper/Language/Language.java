@@ -44,4 +44,5 @@ public interface Language {
     String getHelp_desciption();
     String getHelp_usage();
     String getHelp_title();
+    String getIsWeekEnd();
 }

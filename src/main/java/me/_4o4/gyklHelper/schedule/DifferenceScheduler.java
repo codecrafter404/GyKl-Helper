@@ -2,13 +2,12 @@ package me._4o4.gyklHelper.schedule;
 
 import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.models.Server;
-import me._4o4.gyklHelper.utils.Converter;
+import me._4o4.gyklHelper.utils.HtmlConverter;
 import me._4o4.gyklHelper.utils.Database;
 import me._4o4.gyklHelper.utils.NetworkUtil;
 import me._4o4.vplanwrapper.VPlanAPI;
-import me._4o4.vplanwrapper.models.Date;
-import me._4o4.vplanwrapper.models.Subject;
-import me._4o4.vplanwrapper.models.Week;
+import me._4o4.vplanwrapper.api.Week;
+import me._4o4.vplanwrapper.models.RequestDate;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.pmw.tinylog.Logger;
 
@@ -16,11 +15,11 @@ import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This scheduler checks if the local version of the
+ */
 public class DifferenceScheduler implements Runnable{
 
     @Override
@@ -50,16 +49,10 @@ public class DifferenceScheduler implements Runnable{
                     //Check if data has changed
                     Week week = getWeek(server);
                     if(week == null) return;
-                    boolean hasChanged = !week.getDays().get(0).getChanged_info().equals("DATA_NOT_CHANGED");
-                    if(!hasChanged) return;
+                    if(!week.getDays().get(0).isRequestChanged()) return;
 
 
                     try{
-                        Converter converter = new Converter(
-                                week.getDays().get(0),
-                                "table.ftl",
-                                server
-                        );
 
                         //Build Embed
                         EmbedBuilder embed = new EmbedBuilder();
@@ -69,41 +62,17 @@ public class DifferenceScheduler implements Runnable{
                         for(String channel : server.getConfig().getAnnouncement_channel()){
                             try{
                                 GyKlHelper.getJda().getGuildById(server.getServer_id()).getTextChannelById(channel).sendMessageEmbeds(embed.build())
-                                        .addFile(new ByteArrayInputStream(converter.image2ByteArray(week.getTimes())), "plan.png")
+                                        .addFile(new ByteArrayInputStream(HtmlConverter.image2ByteArray(week.getDays().get(0), week.getTimeTable(), "table.ftl", server)), "plan.png")
                                         .queue();
                             }catch (NullPointerException e){
                                 //Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService
                                 Logger.debug("Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService");
-                                continue;
                             }
                         }
 
                     }catch(Exception e){
                         Logger.warn(String.format("Image generation failed... Server: %s", server.getServer_name()));
                     }
-                    //Check recently checked
-                    /*
-                    if(
-                            DifferenceDatabase.getDates().containsKey(server.getServer_id()) &&
-                            DifferenceDatabase.getDates().get(server.getServer_id()).until(LocalDateTime.now(), ChronoUnit.MINUTES)
-                            < 5
-
-                    ) return;
-                    Week currentWeek = getWeek(server);
-                    if(currentWeek == null){
-                        return;
-                    }
-                    List<List<Subject>> oldSubjects = DifferenceDatabase.getData().containsKey(server.getServer_id())
-                            ?
-                            DifferenceDatabase.getData().get(server.getServer_id())
-                            :
-                            new ArrayList<>();
-                    if(compare(oldSubjects, currentWeek.getDays().get(0).getSubjects())){
-                        return;
-                    }else {
-                        DifferenceDatabase.update(server.getServer_id(), currentWeek.getDays().get(0).getSubjects());
-                    }*/
-
                 }
         );
     }
@@ -112,7 +81,7 @@ public class DifferenceScheduler implements Runnable{
         Week result = null;
         try{
             Week week = new VPlanAPI(server.getConfig().getApi_host(), server.getConfig().getApi_password(), true)
-                    .getWeek(List.of(new Date(server.getData().getCache().getDate(), Integer.parseInt(server.getData().getCache().getTimestamp()))), server.getConfig().getDefault_class());
+                    .getWeek(List.of(new RequestDate(server.getData().getCache().getDate(), Integer.parseInt(server.getData().getCache().getTimestamp()))), server.getConfig().getDefault_class());
             if(week.getError().equals("") && week.getDays().get(0).getError().equals("")) result = week;
         }catch (Exception e){
             Logger.warn(String.format("Can't download Subjects for server '%s'", server.getServer_name()));
@@ -121,18 +90,4 @@ public class DifferenceScheduler implements Runnable{
         return result;
     }
 
-    private boolean compare(List<List<Subject>> old, List<List<Subject>> current){
-        if(old.size() != current.size()) return false;
-        int index = 0;
-        for(List<Subject> subject : current){
-            try{
-                if(!subject.get(0).getName_full().equalsIgnoreCase(current.get(index).get(0).getName_full())) return false;
-                if(!subject.get(0).getInfo().equalsIgnoreCase(current.get(index).get(0).getInfo())) return false;
-                if(!subject.get(0).getRoom_name().equalsIgnoreCase(current.get(index).get(0).getRoom_name())) return false;
-                if(!subject.get(0).getTeacher().get(0).getName().equalsIgnoreCase(current.get(index).get(0).getTeacher().get(0).getName())) return false;
-                index++;
-            }catch (Exception e){continue;}
-        }
-        return true;
-    }
 }

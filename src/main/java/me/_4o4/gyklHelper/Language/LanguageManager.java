@@ -3,6 +3,9 @@ package me._4o4.gyklHelper.Language;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A manager for the Language
+ */
 public class LanguageManager {
     private List<Language> languages = Arrays.asList(
             new English(),
