@@ -34,16 +34,15 @@ public class GyKlHelper {
             TimeZone.setDefault(TimeZone.getTimeZone(Environment.getTIMEZONE()));
         }catch (Exception e){
             Logger.trace(e);
-            Logger.error("Can't set configured TimeZone | This can occur wired errors!");
+            Logger.error("Can't set configured TimeZone | This may produce wired errors!");
         }
-
         Configurator.defaultConfig()
-                .level(Level.TRACE)
+                .level(Level.INFO)
                 .formatPattern("{date:yyyy-MM-dd HH:mm:ss} [{thread}] {class}.{method} | {level} |    {message}")
                 .activate();
 
 
-        Logger.debug("We're on [" + System.getProperty("os.arch") + "]");
+        Logger.info("We're on [" + System.getProperty("os.arch") + "]");
 
         Logger.info("Read environments");
         Environment.parseEnvironments();

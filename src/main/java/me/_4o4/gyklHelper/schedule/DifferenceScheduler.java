@@ -2,6 +2,7 @@ package me._4o4.gyklHelper.schedule;
 
 import me._4o4.gyklHelper.GyKlHelper;
 import me._4o4.gyklHelper.models.Server;
+import me._4o4.gyklHelper.utils.DateAndTimeUtil;
 import me._4o4.gyklHelper.utils.HtmlConverter;
 import me._4o4.gyklHelper.utils.Database;
 import me._4o4.gyklHelper.utils.NetworkUtil;
@@ -56,7 +57,8 @@ public class DifferenceScheduler implements Runnable{
 
                         //Build Embed
                         EmbedBuilder embed = new EmbedBuilder();
-                        embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(java.sql.Date.valueOf(LocalDate.now().plusDays(1))));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        embed.setTitle(new SimpleDateFormat("EEEEE, dd.MM.yyyy", GyKlHelper.getLanguageManager().getLang(server.getConfig().getLanguage()).getLocal()).format(format.parse(server.getData().getCache().getDate())));
                         embed.setImage("attachment://plan.png");
 
                         for(String channel : server.getConfig().getAnnouncement_channel()){
@@ -66,13 +68,16 @@ public class DifferenceScheduler implements Runnable{
                                         .queue();
                             }catch (NullPointerException e){
                                 //Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService
-                                Logger.debug("Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService");
+                                Logger.info("Channel not exists, Guild has kicked or deleted, checked by announcements and CleanUpService");
                             }
                         }
 
                     }catch(Exception e){
                         Logger.warn(String.format("Image generation failed... Server: %s", server.getServer_name()));
                     }
+                    server.getData().getCache().setTimestamp(week.getDays().get(0).getTimestamp());
+                    // Update Database here
+                    new Database().updateServer(server.getServer_id(), server);
                 }
         );
     }

@@ -51,10 +51,12 @@ public class AlertSchedule implements Runnable {
                 DayOfWeek.SATURDAY
         );
         if(blacklistedDays.contains(LocalDate.now().getDayOfWeek())){
+
             Logger.debug(String.format("Skip Task: %s(%s)",
                         server.getServer_name(),
                     LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
                     ));
+
             return;
         }
 
