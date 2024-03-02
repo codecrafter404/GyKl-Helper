@@ -1,3 +1,6 @@
+# Archived
+Our school switched their VPlan system...
+
 # GyKl Helper Discord Bot
 A Discord Bot that announces the current VPlan.
 
